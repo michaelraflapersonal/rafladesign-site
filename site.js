@@ -142,4 +142,17 @@
       });
     });
   }
+
+  /* Project gallery lightbox */
+  var lb = document.querySelector('.lightbox');
+  if (lb && lb.showModal) {
+    var shots = [].slice.call(document.querySelectorAll('.shot')), cur = 0, big = lb.querySelector('img');
+    function show(i) { cur = (i + shots.length) % shots.length; big.src = shots[cur].getAttribute('data-full'); big.alt = shots[cur].getAttribute('data-alt'); }
+    shots.forEach(function (b, i) { b.addEventListener('click', function () { show(i); lb.showModal(); if (window.gtag) gtag('event', 'view_render'); }); });
+    lb.querySelector('.lb-close').addEventListener('click', function () { lb.close(); });
+    lb.querySelector('.lb-prev').addEventListener('click', function () { show(cur - 1); });
+    lb.querySelector('.lb-next').addEventListener('click', function () { show(cur + 1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+    lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1); });
+  }
 })();

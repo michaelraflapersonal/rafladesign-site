@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Builds the Rafla Design static site from shared parts. Run: python3 build.py"""
-import os
+import os, re
 
 OUT = os.path.dirname(os.path.abspath(__file__))
 PHONE = "0409 701 575"
@@ -365,55 +365,98 @@ ELEV = {
   "renovations": '<path class="ground" d="M10 120H190"/><path d="M30 120V64h140v56"/><path d="M20 66l80-44 80 44"/><path d="M90 120V94h20v26"/><path d="M48 76h26v18H48z" stroke-dasharray="4 4"/><path d="M126 76h26v18h-26z"/>',
 }
 
+PROJECTS = [
+  # slug, suburb, title, filters, blurb, alt-subject, image count
+  ("miranda-duplex", "Miranda", "Duplex", "duplex", "A two-storey duplex with glazed balconies, timber-clad feature walls and a single garage to each home.", "two-storey duplex with glass balconies and garages"),
+  ("greystanes-duplex", "Greystanes", "Duplex", "duplex", "A contemporary duplex in dark and pale render, with upper-level balconies and a garage to each dwelling.", "contemporary two-storey duplex in dark and pale render"),
+  ("peakhurst-two-storey-home", "Peakhurst", "Two-storey home", "houses double-storey", "A two-storey home with glass balustrades, a double garage and a landscaped front garden.", "two-storey home with glass balconies and double garage"),
+  ("panania-duplex", "Panania", "Duplex", "duplex", "A pair of two-storey homes with a shared driveway, glazed balconies and generous garages.", "two-storey duplex with glazed balconies and shared driveway"),
+  ("padstow-duplex-pool", "Padstow", "Duplex with pool", "duplex", "A duplex with a garage to each home, a rear pool and a covered terrace.", "duplex with double garage and rear swimming pool"),
+  ("miranda-corner-duplex", "Miranda", "Corner duplex", "duplex", "A corner-site duplex with a timber-battened fence, glass balconies and street frontage on two sides.", "corner duplex with glass balconies and battened fence"),
+  ("sylvania-duplex", "Sylvania", "Duplex", "duplex", "A duplex with green accents, glass balconies and a sloping driveway to each garage.", "two-storey duplex with green accents and glass balconies"),
+  ("padstow-duplex-granny-flat", "Padstow", "Duplex and granny flat", "duplex granny-flat", "A duplex with a garage to each home and a granny flat at the rear.", "duplex with garages and a rear granny flat"),
+  ("padstow-duplex", "Padstow", "Duplex", "duplex", "A dark-toned duplex with large glazed openings, balconies over the entry and parking in front.", "dark-toned two-storey duplex with large windows and balconies"),
+  ("austral-house", "Austral", "Two-storey house", "houses double-storey", "A narrow-lot two-storey house with a stone feature wall, timber garage door and balcony over the entry.", "two-storey house with stone feature wall and balcony"),
+  ("sans-souci-house", "Sans Souci", "Two-storey house", "houses double-storey", "A two-storey house with a tall framed entry, upper balcony, double garage and open-plan living.", "two-storey house with framed entry and double garage"),
+  ("bradbury-house-secondary-dwelling", "Bradbury", "House and secondary dwelling", "houses granny-flat", "A two-storey house with a bright open-plan interior and a secondary dwelling with its own entry.", "two-storey house with open-plan interior and secondary dwelling"),
+  ("peakhurst-house-model", "Peakhurst", "House, 3D model", "houses", "A 3D model of a brick house stepping down a sloping site, with garage below and balcony above.", "3D model of a brick house on a sloping site"),
+  ("sutherland-house-model", "Sutherland", "House, 3D model", "houses double-storey", "A 3D massing model of a two-storey house with skillion roof forms and clerestory windows.", "3D model of a two-storey house with skillion roofs"),
+]
+IMGDIR = os.path.join(OUT, "images")
+
+def _imgs(slug):
+    return sorted(f for f in os.listdir(IMGDIR) if re.fullmatch(re.escape(slug) + r"-\d\d\.webp", f))
+
+def _abs(html):
+    """Project pages live one level down, so make asset and nav links root-relative."""
+    html = re.sub(r'(href|src)="(?!https?:|/|#|tel:|mailto:|data:)([^"]*)"', lambda m: f'{m.group(1)}="/{m.group(2)}"', html)
+    return html.replace('href="/./"', 'href="/"').replace('href="/"', 'href="/"')
+
 def page_portfolio():
-    def elev(key):
-        return f'<svg class="elev" viewBox="0 0 200 140" role="img" aria-label="Line elevation placeholder">{ELEV[key]}</svg>'
-    works = '''
-<article class="work feature" data-type="double-storey houses">
-  <figure><img src="images/house-render.webp" alt="3D render of a modern two-storey home with glass balconies, a double garage and a slatted front fence" loading="lazy"></figure>
-  <div class="work-meta"><h3>Two-storey family home</h3><span class="tag">Double storey</span><p>Rendered façade, glass balconies across the upper level and a double garage behind a slatted front fence.</p></div>
-</article>
-<article class="work" data-type="houses">
-  <figure><img src="images/gymea-deck.webp" alt="3D render of a gabled home with a full-height arched window wall opening onto a wide timber deck" loading="lazy"></figure>
-  <div class="work-meta"><h3>Gabled home with rear deck</h3><span class="tag">Gymea</span><p>A full-height glazed gable with an arched window, opening onto a broad timber deck with built-in steps.</p></div>
-</article>
-<article class="work" data-type="granny-flat">
-  <figure><img src="images/mortdale-granny-front.webp" alt="3D render of a single-storey brick granny flat with a skillion roof and single garage" loading="lazy"></figure>
-  <div class="work-meta"><h3>Granny flat with garage</h3><span class="tag">Mortdale</span><p>A brick secondary dwelling with a skillion roof, single garage and its own driveway.</p></div>
-</article>
-<article class="work wide inside" data-type="granny-flat">
-  <figure class="cutaway">
-    <img src="images/mortdale-cutaway-a.webp" alt="3D cutaway of the Mortdale granny flat showing the furnished layout from the garage end" loading="lazy" data-view="a">
-    <img src="images/mortdale-cutaway-b.webp" alt="3D cutaway of the Mortdale granny flat showing the furnished layout from the bedroom end" loading="lazy" data-view="b" hidden>
-    <button class="turn" type="button" aria-label="Turn the model around">Turn around</button>
-  </figure>
-  <div class="work-meta"><h3>Inside the plan: Mortdale granny flat</h3><span class="tag">3D cutaway</span><p>The same design with the roof lifted off: garage, kitchen, open living and dining, bathroom and two bedrooms. This is how we show you a layout before anything is built.</p></div>
-</article>
-<article class="work wide" data-type="double-storey houses">
-  <figure><img src="images/two-storey-render.webp" alt="3D model of a two-storey home with a hipped roof, upper balcony and double garage" loading="lazy"></figure>
-  <div class="work-meta"><h3>Two-storey home with balcony</h3><span class="tag">Double storey</span><p>Hipped roof, an upper-level balcony over the entry and a double garage set into the façade.</p></div>
-</article>
-<article class="work full" data-type="houses">
-  <figure><img src="images/edmondson-living.webp" alt="Interior render of an open-plan living, dining and kitchen space with a long joinery wall" loading="lazy"></figure>
-  <div class="work-meta"><h3>Open-plan living, house and pool</h3><span class="tag">Edmondson Park</span><p>Living, dining and kitchen in one long space, with full-height glazing to the outdoor area.</p></div>
+    cards = ""
+    for i, (slug, suburb, title, types, blurb, alt) in enumerate(PROJECTS):
+        n = len(_imgs(slug))
+        cls = "work feature" if i == 0 else "work"
+        cards += f'''
+<article class="{cls}" data-type="{types}">
+  <a class="work-link" href="portfolio/{slug}" aria-label="{title} in {suburb}: view {n} images">
+    <figure><img src="images/{slug}-thumb.webp" alt="Render of a {alt}, {suburb}" loading="{'eager' if i < 2 else 'lazy'}" width="900" height="600"></figure>
+    <div class="work-meta"><h3>{title}</h3><span class="tag">{suburb}</span><span class="count">{n} images</span><p>{blurb}</p></div>
+  </a>
 </article>'''
     filters = '''<div class="filters" role="group" aria-label="Filter projects">
   <button type="button" data-filter="all" aria-pressed="true">All</button>
   <button type="button" data-filter="houses" aria-pressed="false">Houses</button>
-  <button type="button" data-filter="double-storey" aria-pressed="false">Double storey</button>
+  <button type="button" data-filter="duplex" aria-pressed="false">Duplexes</button>
   <button type="button" data-filter="granny-flat" aria-pressed="false">Granny flats</button>
 </div>'''
+    items = ",".join(f'{{"@type":"ListItem","position":{i+1},"url":"{SITE}/portfolio/{p[0]}"}}' for i, p in enumerate(PROJECTS))
+    ld = f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{items}]}}</script>'
     return head("Portfolio | Rafla Design",
-                "Homes, duplexes, granny flats, townhouses and renovations designed by Rafla Design across Sydney.", "portfolio.html") + header("portfolio.html") + page_head(
+                "Duplexes, houses and granny flats designed by Rafla Design across Sydney's south and south-west. See the 3D renders.", "portfolio.html").replace("</head>", ld + "\n</head>") + header("portfolio.html") + page_head(
         "Projects since 2000. Here’s a selection.",
-        "From single homes to townhouse developments, every project is drawn for its site, its owners and its Council.") + f'''
+        "Every project is drawn for its site, its owners and its Council. Open one to see the full set of renders.") + f'''
 <section class="band band-white">
   <div class="wrap">
     {filters}
-    <div class="works">{works}</div>
+    <div class="works">{cards}</div>
   </div>
 </section>
 ''' + closer("Have a project in mind?", "Tell us about it and we’ll talk through the options, free of charge.") + footer()
+
+
+def page_project(slug):
+    p = next(x for x in PROJECTS if x[0] == slug)
+    _, suburb, title, types, blurb, alt = p
+    files = _imgs(slug)
+    figs = "".join(
+        f'<li><button type="button" class="shot" data-full="/images/{f}" data-alt="Render {k+1} of {len(files)}: {alt}, {suburb}"><img src="/images/{f}" alt="Render {k+1} of {len(files)}: {alt}, {suburb}" loading="{'eager' if k < 2 else 'lazy'}" width="1400" height="788"></button></li>'
+        for k, f in enumerate(files))
+    others = "".join(
+        f'<a class="more-card" href="/portfolio/{o[0]}"><img src="/images/{o[0]}-thumb.webp" alt="" loading="lazy" width="900" height="600"><span><strong>{o[2]}</strong> {o[1]}</span></a>'
+        for o in PROJECTS if o[0] != slug)[:6000]
+    others = "".join(
+        f'<a class="more-card" href="/portfolio/{o[0]}"><img src="/images/{o[0]}-thumb.webp" alt="" loading="lazy" width="900" height="600"><span><strong>{o[2]}</strong> {o[1]}</span></a>'
+        for o in [x for x in PROJECTS if x[0] != slug][:3])
+    url = f"{SITE}/portfolio/{slug}"
+    ld = ('<script type="application/ld+json">{"@context":"https://schema.org","@graph":['
+          f'{{"@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{SITE}/"}},{{"@type":"ListItem","position":2,"name":"Portfolio","item":"{SITE}/portfolio"}},{{"@type":"ListItem","position":3,"name":"{title} in {suburb}","item":"{url}"}}]}},'
+          f'{{"@type":"ImageGallery","name":"{title} in {suburb}","url":"{url}","image":[' + ",".join(f'{{"@type":"ImageObject","contentUrl":"{SITE}/images/{f}","description":"{alt}, {suburb}"}}' for f in files) + ']}]}</script>')
+    h = head(f"{title} in {suburb} | Rafla Design", f"{blurb} Designed by Rafla Design. {len(files)} 3D renders.", f"portfolio/{slug}").replace("</head>", ld + "\n</head>")
+    body = header("portfolio.html") + page_head(f"{title}, {suburb}", blurb) + f'''
+<section class="band band-white">
+  <div class="wrap">
+    <p class="crumbs"><a href="portfolio.html">&larr; All projects</a></p>
+    <ul class="gallery">{figs}</ul>
+    <dl class="facts"><div><dt>Suburb</dt><dd>{suburb}</dd></div><div><dt>Project</dt><dd>{title}</dd></div><div><dt>Images</dt><dd>{len(files)} 3D renders</dd></div></dl>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap"><h2>More projects</h2><div class="more">{others}</div></div>
+</section>
+<dialog class="lightbox" aria-label="Image viewer"><button type="button" class="lb-close" aria-label="Close">Close</button><button type="button" class="lb-prev" aria-label="Previous image">&#8249;</button><img alt=""><button type="button" class="lb-next" aria-label="Next image">&#8250;</button></dialog>
+''' + closer("Have a project like this in mind?", "Tell us about it and we’ll talk through the options, free of charge.") + footer()
+    return _abs(h + body)
 
 
 def page_about():
@@ -481,8 +524,12 @@ if __name__ == "__main__":
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n")
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
-        urls = "".join(f"<url><loc>{SITE}/{'' if n == 'index.html' else n.replace('.html', '')}</loc></url>" for n in PAGES)
+        urls = "".join(f"<url><loc>{SITE}/{'' if n == 'index.html' else n.replace('.html', '')}</loc></url>" for n in PAGES) + "".join(f"<url><loc>{SITE}/portfolio/{p[0]}</loc></url>" for p in PROJECTS)
         f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
+    os.makedirs(os.path.join(OUT, "portfolio"), exist_ok=True)
+    for p in PROJECTS:
+        with open(os.path.join(OUT, "portfolio", p[0] + ".html"), "w") as f:
+            f.write(page_project(p[0]))
     with open(os.path.join(OUT, "404.html"), "w") as f:
         f.write(page_404())
     with open(os.path.join(OUT, "_headers"), "w") as f:
