@@ -8,7 +8,7 @@
   var mbar = document.querySelector('.mbar');
   function onScroll() {
     var y = window.scrollY || 0;
-    if (hdr) hdr.classList.toggle('is-scrolled', y > 8);
+    if (hdr) { var on = hdr.classList.contains('is-scrolled'); if (!on && y > 24) hdr.classList.add('is-scrolled'); else if (on && y < 4) hdr.classList.remove('is-scrolled'); }
     if (mbar) mbar.classList.toggle('is-on', y > 420);
   }
   window.addEventListener('scroll', onScroll, { passive: true });

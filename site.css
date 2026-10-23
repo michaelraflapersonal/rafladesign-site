@@ -77,8 +77,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   border-bottom: 1px solid transparent; transition: border-color .3s, box-shadow .3s;
 }
 .hdr.is-scrolled { border-bottom-color: var(--line); box-shadow: 0 6px 24px -18px rgba(15,46,41,.5); }
-.hdr-in { display: flex; align-items: center; gap: 1.5rem; min-height: 76px; transition: min-height .3s var(--ease); }
-.hdr.is-scrolled .hdr-in { min-height: 64px; }
+.hdr-in { display: flex; align-items: center; gap: 1.5rem; min-height: 72px; } /* fixed height: resizing on scroll made the bar jitter at the top */
 .brand { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: var(--spruce); margin-right: auto; }
 .brand-mark { width: 40px; height: 40px; fill: var(--mint); flex: none; }
 .brand-name { font-family: var(--display); font-weight: 780; font-variation-settings: "wdth" 120; font-size: 1.08rem; letter-spacing: .01em; }
