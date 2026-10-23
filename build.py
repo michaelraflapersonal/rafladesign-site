@@ -209,12 +209,12 @@ SCHEMA = '<script type="application/ld+json">{"@context":"https://schema.org","@
 # ---------------- Pages ----------------
 
 def page_home():
-    dims = [("1000", "+", "projects designed and drafted"), ("2000", "", "year Joseph Rafla started the practice"),
+    dims = [("Family", "", "father-and-son practice, dealing with you directly"), ("2000", "", "year Joseph Rafla started the practice"),
             ("Fixed", None, "fee agreed up front"), ("Council", None, "lodgement handled for you")]
     dim_html = ""
     for v, suf, lab in dims:
         if suf is not None:
-            val = f'<div class="dim-value" data-count="{v}" data-suffix="{suf}">{int(v):,}{suf}</div>' if v == "1000" else f'<div class="dim-value">{v}</div>'
+            val = f'<div class="dim-value">{v}</div>'
         else:
             val = f'<div class="dim-value">{v}</div>'
         dim_html += f'<div class="dim"><div class="dim-line" aria-hidden="true"></div>{val}<div class="dim-label">{lab}</div></div>'
@@ -226,12 +226,12 @@ def page_home():
     steps = "".join(f'<li><h3>{t}</h3><p>{d.split(". ")[0]}.</p></li>' for t, d, _ in STEPS)
 
     return head("Rafla Design | Home design and drafting in Sydney",
-                "Family-run home design and drafting since 2000. Over 1000 houses, duplexes, granny flats and renovations designed, with fixed fees and Council handled for you. Book a free consultation.", "./").replace("</head>", SCHEMA + "</head>") + header("./") + f'''
+                "Family-run home design and drafting since 2000. Houses, duplexes, granny flats and renovations designed, with fixed fees and Council handled for you. Book a free consultation.", "./").replace("</head>", SCHEMA + "</head>") + header("./") + f'''
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <h1>Home designs that get approved, then get built.</h1>
-      <p class="lead">Rafla Design is a father-and-son design and drafting practice. Since 2000 we’ve drawn over 1000 homes, duplexes, granny flats and renovations, and we deal with Council for you all the way to approval.</p>
+      <p class="lead">Rafla Design is a father-and-son design and drafting practice. Since 2000 we’ve designed homes, duplexes, granny flats and renovations for Sydney families, and we deal with Council for you all the way to approval.</p>
       <div class="hero-actions">
         <a class="btn btn-mint" href="#enquire">Book a free consultation</a>
         <a class="btn btn-ghost" href="tel:{TEL}">{PHONE_SVG}Call {PHONE}</a>
@@ -396,7 +396,7 @@ def page_portfolio():
 </div>'''
     return head("Portfolio | Rafla Design",
                 "Homes, duplexes, granny flats, townhouses and renovations designed by Rafla Design across Sydney.", "portfolio.html") + header("portfolio.html") + page_head(
-        "Over 1000 projects since 2000. Here’s a selection.",
+        "Projects since 2000. Here’s a selection.",
         "From single homes to townhouse developments, every project is drawn for its site, its owners and its Council.") + f'''
 <section class="band band-white">
   <div class="wrap">
@@ -409,7 +409,7 @@ def page_portfolio():
 
 def page_about():
     return head("About | Rafla Design",
-                "Rafla Design is a father-and-son design and drafting practice started by civil engineer Joseph Rafla in 2000, with over 1000 projects completed.", "about.html") + header("about.html") + page_head(
+                "Rafla Design is a father-and-son design and drafting practice started by civil engineer Joseph Rafla in 2000.", "about.html") + header("about.html") + page_head(
         "A father and son with a love for design",
         "Family owned since 2000, and still small enough that you deal with us directly.") + f'''
 <section class="band band-white">
@@ -417,7 +417,7 @@ def page_about():
     <div class="measure">
       <p>Thank you for visiting Rafla Design. We’d love to get to know you, and we know you’ll decide based on what you know about us. So here it is.</p>
       <p>Rafla Design began in 2000 when Joseph Rafla, a civil engineer, designed the homes of his three brothers. His son, Michael, joined what became a successful family practice.</p>
-      <p>Since then we’ve taken on over 1000 projects: single and double storey houses, duplexes, townhouses, granny flats and more. No job is too small. Whether it’s a new build or a renovation, we keep budget and realistic, buildable design at the front.</p>
+      <p>Since then we’ve taken on single and double storey houses, duplexes, townhouses, granny flats and more. No job is too small. Whether it’s a new build or a renovation, we keep budget and realistic, buildable design at the front.</p>
       <p>Our tight-knit team means you get our undivided attention and personal service, for a journey that’s as smooth as possible.</p>
       <p style="margin-top:2rem"><a class="btn btn-mint" href="contact.html#enquire">Book a free consultation</a></p>
     </div>
