@@ -194,13 +194,15 @@ def hero_sign():
 def corner():
     return f'<svg class="corner" viewBox="0 0 120 120" aria-hidden="true">{MARK}</svg>'
 
-def page_head(h1, lead):
-    return f'''<section class="page-head">
+def page_head(h1, lead, photo=None):
+    cls = "page-head has-photo" if photo else "page-head"
+    bg = f' style="background-image:url({photo})"' if photo else ""
+    return f'''<section class="{cls}"{bg}>
   <div class="wrap">
     <h1>{h1}</h1>
     <p class="lead">{lead}</p>
   </div>
-  {corner()}
+  {"" if photo else corner()}
 </section>
 '''
 
@@ -421,7 +423,7 @@ def page_portfolio():
     return head("Portfolio | Rafla Design",
                 "Duplexes, houses and granny flats designed by Rafla Design across Sydney's south and south-west. See the 3D renders.", "portfolio.html").replace("</head>", ld + "\n</head>") + header("portfolio.html") + page_head(
         "Projects since 2000. Here’s a selection.",
-        "Every project is drawn for its site, its owners and its Council. Open one to see the full set of renders.") + f'''
+        "Every project is drawn for its site, its owners and its Council. Open one to see the full set of renders.", photo="images/portfolio-hero.webp") + f'''
 <section class="band band-white">
   <div class="wrap">
     {filters}
