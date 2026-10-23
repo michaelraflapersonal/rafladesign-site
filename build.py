@@ -148,12 +148,10 @@ def chips():
     out.append('<label class="chip"><input type="radio" name="project_type" value="Not sure yet" id="type-unsure"><span>Not sure yet</span></label>')
     return "".join(out)
 
-# Web3Forms access key (free, emails enquiries to info@rafladesign.com). Paste the key here, run build.py, redeploy.
-WEB3FORMS_KEY = os.environ.get("WEB3FORMS_KEY", "")
-
+# The form posts to the site's own Worker (src/worker.js), which emails the enquiry.
 def enquiry_form():
-    ep = "https://api.web3forms.com/submit" if WEB3FORMS_KEY else ""
-    hidden = (f'<input type="hidden" name="access_key" value="{WEB3FORMS_KEY}"><input type="hidden" name="subject" value="New enquiry from rafladesign.com"><input type="hidden" name="from_name" value="Rafla Design website"><input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" style="display:none">' if WEB3FORMS_KEY else "")
+    ep = "/api/enquiry"
+    hidden = '<input type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">'
     return f'''<form class="form" id="enquire" data-enquiry data-endpoint="{ep}" novalidate>{hidden}
   <h3>Request a free consultation</h3>
   <p>Tell us a little about the project. We’ll call to arrange a time that suits you.</p>
@@ -480,4 +478,4 @@ if __name__ == "__main__":
         f.write(page_404())
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/*.css\n  Cache-Control: public, max-age=3600\n\n/*.js\n  Cache-Control: public, max-age=3600\n")
-    print("built", ", ".join(PAGES), "+ 404, _headers; form", "LIVE" if WEB3FORMS_KEY else "not connected")
+    print("built", ", ".join(PAGES), "+ 404, _headers; form", "posts to /api/enquiry")
