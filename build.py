@@ -374,6 +374,7 @@ PROJECTS = [
   ("panania-duplex", "Panania", "Duplex", "duplex", "A pair of two-storey homes with a shared driveway, glazed balconies and generous garages.", "two-storey duplex with glazed balconies and shared driveway"),
   ("padstow-duplex-pool", "Padstow", "Duplex with pool", "duplex", "A duplex with a garage to each home, a rear pool and a covered terrace.", "duplex with double garage and rear swimming pool"),
   ("miranda-corner-duplex", "Miranda", "Corner duplex", "duplex", "A corner-site duplex with a timber-battened fence, glass balconies and street frontage on two sides.", "corner duplex with glass balconies and battened fence"),
+  ("sylvania-sloping-site-duplex", "Sylvania", "Duplex on a sloping site", "duplex", "A duplex stepped into a steep block, with basement garages, curved stone retaining walls and glass-balustraded entry stairs.", "duplex on a sloping site with basement garages and stone retaining walls"),
   ("sylvania-duplex", "Sylvania", "Duplex", "duplex", "A duplex with green accents, glass balconies and a sloping driveway to each garage.", "two-storey duplex with green accents and glass balconies"),
   ("padstow-duplex-granny-flat", "Padstow", "Duplex and granny flat", "duplex granny-flat", "A duplex with a garage to each home and a granny flat at the rear.", "duplex with garages and a rear granny flat"),
   ("padstow-duplex", "Padstow", "Duplex", "duplex", "A dark-toned duplex with large glazed openings, balconies over the entry and parking in front.", "dark-toned two-storey duplex with large windows and balconies"),
