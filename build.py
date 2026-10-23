@@ -243,7 +243,7 @@ def page_home():
         if sl not in byslug:
             continue
         _, sub, ttl, _, _, alt = byslug[sl]
-        reel += f'<a class="reel-card" href="portfolio/{sl}"><img src="images/{sl}-thumb.webp" alt="Render of a {alt}, {sub}" loading="lazy" width="900" height="600"><span class="reel-cap"><b>{ttl}</b><i>{sub}</i></span></a>'
+        reel += f'<a class="reel-card" href="portfolio/{sl}"><img src="images/{sl}-thumb.webp" alt="{'Floor plans of a' if sl in PLAN_SLUGS else 'Render of a'} {alt}, {sub}" loading="lazy" width="900" height="600"><span class="reel-cap"><b>{ttl}</b><i>{sub}</i></span></a>'
     nproj = len(PROJECTS)
 
     steps = "".join(f'<li><h3>{t}</h3><p>{d.split(". ")[0]}.</p></li>' for t, d, _ in STEPS)
@@ -401,6 +401,7 @@ PROJECTS = [
   ("gymea-extension", "Gymea", "Single-storey extension", "houses", "A rear extension with a raked ceiling, a wall of sliding glass opening to a timber deck, and open-plan living and dining.", "single-storey house extension with sliding glass doors and timber deck"),
   ("fiji-community-grounds", "Fiji", "Community and church grounds", "commercial", "Landscaped community grounds with a hall, covered outdoor dining, a play area, a fire pit and a court, designed to be used day and night.", "community grounds with hall, play area, fire pit and covered outdoor dining at dusk"),
   ("arncliffe-car-park", "Arncliffe", "Car park with brick boundary", "commercial", "An off-street car park with a brick and steel boundary fence, planted edges, and a stair and lift connecting the levels.", "off-street car park with brick boundary fence and stair and lift access"),
+  ("ermington-second-storey-addition", "Ermington", "Second-storey addition", "houses double-storey", "A second-storey addition to an existing home. The new upper floor holds a family room, three bedrooms, a bathroom and a master suite with walk-in robe.", "second-storey addition"),
   ("miranda-corner-duplex", "Miranda", "Corner duplex", "duplex", "A corner-site duplex with a timber-battened fence, glass balconies and street frontage on two sides.", "corner duplex with glass balconies and battened fence"),
   ("sylvania-sloping-site-duplex", "Sylvania", "Duplex on a sloping site", "duplex", "A duplex stepped into a steep block, with basement garages, curved stone retaining walls and glass-balustraded entry stairs.", "duplex on a sloping site with basement garages and stone retaining walls"),
   ("sylvania-two-houses", "Sylvania", "Two houses", "houses double-storey", "Two neighbouring two-storey houses designed together, each with its own garage, glass balconies and brick and timber detailing.", "two neighbouring two-storey houses with glass balconies and garages"),
@@ -415,6 +416,11 @@ PROJECTS = [
   ("sutherland-house-model", "Sutherland", "House, 3D model", "houses double-storey", "A 3D massing model of a two-storey house with skillion roof forms and clerestory windows.", "3D model of a two-storey house with skillion roofs"),
 ]
 IMGDIR = os.path.join(OUT, "images")
+
+PLAN_SLUGS = {"ermington-second-storey-addition"}
+
+def _kind(slug):
+    return "floor plans" if slug in PLAN_SLUGS else "3D renders"
 
 def _imgs(slug):
     return sorted(f for f in os.listdir(IMGDIR) if re.fullmatch(re.escape(slug) + r"-\d\d\.webp", f))
@@ -432,7 +438,7 @@ def page_portfolio():
         cards += f'''
 <article class="{cls}" data-type="{types}">
   <a class="work-link" href="portfolio/{slug}" aria-label="{title} in {suburb}: view {n} images">
-    <figure><img src="images/{slug}-thumb.webp" alt="Render of a {alt}, {suburb}" loading="{'eager' if i < 2 else 'lazy'}" width="900" height="600"></figure>
+    <figure><img src="images/{slug}-thumb.webp" alt="{'Floor plans of a' if slug in PLAN_SLUGS else 'Render of a'} {alt}, {suburb}" loading="{'eager' if i < 2 else 'lazy'}" width="900" height="{675 if slug in PLAN_SLUGS else 600}"></figure>
     <div class="work-meta"><h3>{title}</h3><span class="tag">{suburb}</span><span class="count">{n} images</span><p>{blurb}</p></div>
   </a>
 </article>'''
@@ -463,8 +469,14 @@ def page_project(slug):
     p = next(x for x in PROJECTS if x[0] == slug)
     _, suburb, title, types, blurb, alt = p
     files = _imgs(slug)
+    plan = slug in PLAN_SLUGS
+    word = "Floor plan" if plan else "Render"
+    from PIL import Image as _Im
+    def _wh(f):
+        with _Im.open(os.path.join(IMGDIR, f)) as im:
+            return im.size
     figs = "".join(
-        f'<li><button type="button" class="shot" data-full="/images/{f}" data-alt="Render {k+1} of {len(files)}: {alt}, {suburb}"><img src="/images/{f}" alt="Render {k+1} of {len(files)}: {alt}, {suburb}" loading="{'eager' if k < 2 else 'lazy'}" width="1400" height="788"></button></li>'
+        f'<li><button type="button" class="shot" data-full="/images/{f}" data-alt="{word} {k+1} of {len(files)}: {alt}, {suburb}"><img src="/images/{f}" alt="{word} {k+1} of {len(files)}: {alt}, {suburb}" loading="{'eager' if k < 2 else 'lazy'}" width="{_wh(f)[0]}" height="{_wh(f)[1]}"></button></li>'
         for k, f in enumerate(files))
     others = "".join(
         f'<a class="more-card" href="/portfolio/{o[0]}"><img src="/images/{o[0]}-thumb.webp" alt="" loading="lazy" width="900" height="600"><span><strong>{o[2]}</strong> {o[1]}</span></a>'
@@ -476,13 +488,13 @@ def page_project(slug):
     ld = ('<script type="application/ld+json">{"@context":"https://schema.org","@graph":['
           f'{{"@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{SITE}/"}},{{"@type":"ListItem","position":2,"name":"Portfolio","item":"{SITE}/portfolio"}},{{"@type":"ListItem","position":3,"name":"{title} in {suburb}","item":"{url}"}}]}},'
           f'{{"@type":"ImageGallery","name":"{title} in {suburb}","url":"{url}","image":[' + ",".join(f'{{"@type":"ImageObject","contentUrl":"{SITE}/images/{f}","description":"{alt}, {suburb}"}}' for f in files) + ']}]}</script>')
-    h = head(f"{title} in {suburb} | Rafla Design", f"{blurb} Designed by Rafla Design. {len(files)} 3D renders.", f"portfolio/{slug}").replace("</head>", ld + "\n</head>")
+    h = head(f"{title} in {suburb} | Rafla Design", f"{blurb} Designed by Rafla Design. {len(files)} {_kind(slug)}.", f"portfolio/{slug}").replace("</head>", ld + "\n</head>")
     body = header("portfolio.html") + page_head(f"{title}, {suburb}", blurb) + f'''
 <section class="band band-white">
   <div class="wrap">
     <p class="crumbs"><a href="portfolio.html">&larr; All projects</a></p>
-    <ul class="gallery">{figs}</ul>
-    <dl class="facts"><div><dt>Suburb</dt><dd>{suburb}</dd></div><div><dt>Project</dt><dd>{title}</dd></div><div><dt>Images</dt><dd>{len(files)} 3D renders</dd></div></dl>
+    <ul class="gallery{" plans" if plan else ""}">{figs}</ul>
+    <dl class="facts"><div><dt>Suburb</dt><dd>{suburb}</dd></div><div><dt>Project</dt><dd>{title}</dd></div><div><dt>Images</dt><dd>{len(files)} {_kind(slug)}</dd></div></dl>
   </div>
 </section>
 <section class="band">
