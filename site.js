@@ -155,4 +155,15 @@
     lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
     lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1); });
   }
+
+  /* Home project reel arrows */
+  var reel = document.querySelector('[data-reel-track]');
+  if (reel) {
+    [].forEach.call(document.querySelectorAll('[data-reel]'), function (b) {
+      b.addEventListener('click', function () {
+        var card = reel.querySelector('.reel-card');
+        reel.scrollBy({ left: (card ? card.offsetWidth + 16 : 400) * parseInt(b.getAttribute('data-reel'), 10) * 2, behavior: 'smooth' });
+      });
+    });
+  }
 })();

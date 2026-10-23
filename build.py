@@ -236,6 +236,16 @@ def page_home():
         f'<li><a href="contact.html#{k}">{icon(k)}<h3>{t}</h3><p>{d}</p><span class="go">Enquire</span></a></li>'
         for k, t, d in TYPES)
 
+    pick = ["miranda-duplex", "casula-steep-site-house", "blakehurst-house-pool", "greystanes-duplex", "peakhurst-two-storey-home", "padstow-duplex-balconies", "fiji-community-grounds", "sylvania-sloping-site-duplex", "southport-unit-block", "austral-house"]
+    byslug = {p[0]: p for p in PROJECTS}
+    reel = ""
+    for sl in pick:
+        if sl not in byslug:
+            continue
+        _, sub, ttl, _, _, alt = byslug[sl]
+        reel += f'<a class="reel-card" href="portfolio/{sl}"><img src="images/{sl}-thumb.webp" alt="Render of a {alt}, {sub}" loading="lazy" width="900" height="600"><span class="reel-cap"><b>{ttl}</b><i>{sub}</i></span></a>'
+    nproj = len(PROJECTS)
+
     steps = "".join(f'<li><h3>{t}</h3><p>{d.split(". ")[0]}.</p></li>' for t, d, _ in STEPS)
 
     return head("Rafla Design | Home design and drafting in Sydney",
@@ -263,6 +273,14 @@ def page_home():
 
 <section class="dims" aria-label="Rafla Design at a glance">
   <div class="wrap dims-row">{dim_html}</div>
+</section>
+
+<section class="reel-band on-dark" aria-label="Recent projects">
+  <div class="wrap reel-head">
+    <div><h2>See what we’ve drawn</h2><p>Real homes, duplexes and granny flats across Sydney, shown as 3D renders.</p></div>
+    <div class="reel-ctrl"><button type="button" data-reel="-1" aria-label="Previous projects">&#8592;</button><button type="button" data-reel="1" aria-label="Next projects">&#8594;</button></div>
+  </div>
+  <div class="reel" data-reel-track tabindex="0" aria-label="Scrollable list of projects">{reel}<a class="reel-card reel-all" href="portfolio"><span>See all {nproj} projects<em>&#8594;</em></span></a></div>
 </section>
 
 <section class="band band-white">
