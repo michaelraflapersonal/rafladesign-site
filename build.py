@@ -381,7 +381,7 @@ PROJECTS = [
   ("austral-house", "Austral", "Two-storey house", "houses double-storey", "A narrow-lot two-storey house with a stone feature wall, timber garage door and balcony over the entry.", "two-storey house with stone feature wall and balcony"),
   ("sans-souci-house", "Sans Souci", "Two-storey house", "houses double-storey", "A two-storey house with a tall framed entry, upper balcony, double garage and open-plan living.", "two-storey house with framed entry and double garage"),
   ("bradbury-house-secondary-dwelling", "Bradbury", "House and secondary dwelling", "houses granny-flat", "A two-storey house with a bright open-plan interior and a secondary dwelling with its own entry.", "two-storey house with open-plan interior and secondary dwelling"),
-  ("southport-three-storey-building", "Southport", "Three-storey residential building", "houses", "A three-storey building with timber-clad screens, a rooftop planter edge and undercover parking at ground level.", "three-storey residential building with timber screens and undercover parking"),
+  ("southport-unit-block", "Southport", "Block of units", "units", "A three-storey block of units with timber-clad screens, a planted rooftop edge and undercover parking at ground level.", "three-storey block of units with timber screens and undercover parking"),
   ("fairfield-heights-car-wash", "Fairfield Heights", "Commercial: hand car wash", "commercial", "A corner-site hand car wash with a curved steel canopy, landscaped planter edge and pedestrian-friendly frontage.", "corner hand car wash with curved canopy and landscaped planter"),
   ("peakhurst-house-model", "Peakhurst", "House, 3D model", "houses", "A 3D model of a brick house stepping down a sloping site, with garage below and balcony above.", "3D model of a brick house on a sloping site"),
   ("sutherland-house-model", "Sutherland", "House, 3D model", "houses double-storey", "A 3D massing model of a two-storey house with skillion roof forms and clerestory windows.", "3D model of a two-storey house with skillion roofs"),
@@ -413,6 +413,7 @@ def page_portfolio():
   <button type="button" data-filter="houses" aria-pressed="false">Houses</button>
   <button type="button" data-filter="duplex" aria-pressed="false">Duplexes</button>
   <button type="button" data-filter="granny-flat" aria-pressed="false">Granny flats</button>
+  <button type="button" data-filter="units" aria-pressed="false">Units</button>
   <button type="button" data-filter="commercial" aria-pressed="false">Commercial</button>
 </div>'''
     items = ",".join(f'{{"@type":"ListItem","position":{i+1},"url":"{SITE}/portfolio/{p[0]}"}}' for i, p in enumerate(PROJECTS))
@@ -540,5 +541,5 @@ if __name__ == "__main__":
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/*.css\n  Cache-Control: public, max-age=3600\n\n/*.js\n  Cache-Control: public, max-age=3600\n")
     with open(os.path.join(OUT, "_redirects"), "w") as f:
-        f.write("# Old WordPress URLs -> new site\n/project /portfolio 301\n/project/* /portfolio 301\n/dt_team/* /about 301\n/blog / 301\n")
+        f.write("# Old WordPress URLs -> new site\n/project /portfolio 301\n/project/* /portfolio 301\n/dt_team/* /about 301\n/blog / 301\n/portfolio/southport-three-storey-building /portfolio/southport-unit-block 301\n")
     print("built", ", ".join(PAGES), "+ 404, _headers; form", "posts to /api/enquiry")
