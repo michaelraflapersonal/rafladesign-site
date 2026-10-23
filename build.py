@@ -46,6 +46,11 @@ FONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="pr
 def icon(key, cls="ico"):
     return f'<svg class="{cls}" viewBox="0 0 64 48" aria-hidden="true">{ICONS[key]}</svg>'
 
+GA_ID = "G-8XYZ90SLBC"
+GA = f"""<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>"""
+
+
 def head(title, desc, path):
     return f'''<!DOCTYPE html>
 <html lang="en-AU">
@@ -63,6 +68,7 @@ def head(title, desc, path):
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 {FONT}
 <link rel="stylesheet" href="site.css">
+{GA}
 </head>
 <body>
 '''

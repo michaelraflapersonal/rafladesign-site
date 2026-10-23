@@ -110,11 +110,18 @@
         .then(function (r) {
           if (!r.ok) throw new Error();
           form.reset();
+          if (window.gtag) gtag('event', 'generate_lead', { form: 'enquiry' });
           show('ok', 'Thanks, your request is in. We’ll call you to arrange your free consultation.');
         })
         .catch(function () { show('err', 'Your request didn’t send. Check your connection and try again, or call 0409 701 575.'); })
         .then(function () { btn.disabled = false; btn.textContent = 'Request my free consultation'; });
     });
+  });
+
+  /* Analytics: phone and email link clicks */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
+    if (a && window.gtag) gtag('event', a.getAttribute('href').indexOf('tel:') === 0 ? 'click_phone' : 'click_email');
   });
 
   /* Cutaway: turn the model around */
