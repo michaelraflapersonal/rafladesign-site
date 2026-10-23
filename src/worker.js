@@ -96,6 +96,10 @@ async function handleEnquiry(request, env) {
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
+    // Old WordPress site was hit by casino spam under /projects/* and /blog/page/*.
+    // 410 Gone tells Google to drop them faster than a 404.
+    if (pathname.startsWith("/projects/") || pathname.startsWith("/blog/page/"))
+      return new Response("Gone", { status: 410, headers: { "content-type": "text/plain", "x-robots-tag": "noindex" } });
     if (pathname === "/api/enquiry") return handleEnquiry(request, env);
     if (pathname.startsWith("/api/")) return json({ ok: false }, 404);
     return env.ASSETS.fetch(request);

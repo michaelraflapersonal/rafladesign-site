@@ -1,0 +1,5 @@
+# Old WordPress URLs -> new site
+/project /portfolio 301
+/project/* /portfolio 301
+/dt_team/* /about 301
+/blog / 301

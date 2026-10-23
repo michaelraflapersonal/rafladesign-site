@@ -487,4 +487,6 @@ if __name__ == "__main__":
         f.write(page_404())
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/*.css\n  Cache-Control: public, max-age=3600\n\n/*.js\n  Cache-Control: public, max-age=3600\n")
+    with open(os.path.join(OUT, "_redirects"), "w") as f:
+        f.write("# Old WordPress URLs -> new site\n/project /portfolio 301\n/project/* /portfolio 301\n/dt_team/* /about 301\n/blog / 301\n")
     print("built", ", ".join(PAGES), "+ 404, _headers; form", "posts to /api/enquiry")
