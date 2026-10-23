@@ -370,6 +370,7 @@ PROJECTS = [
   ("miranda-duplex", "Miranda", "Duplex", "duplex", "A two-storey duplex with glazed balconies, timber-clad feature walls and a single garage to each home.", "two-storey duplex with glass balconies and garages"),
   ("greystanes-duplex", "Greystanes", "Duplex", "duplex", "A contemporary duplex in dark and pale render, with upper-level balconies and a garage to each dwelling.", "contemporary two-storey duplex in dark and pale render"),
   ("peakhurst-two-storey-home", "Peakhurst", "Two-storey home", "houses double-storey", "A two-storey home with glass balustrades, a double garage and a landscaped front garden.", "two-storey home with glass balconies and double garage"),
+  ("padstow-duplex-balconies", "Padstow", "Duplex", "duplex", "A two-storey duplex with deep, rounded balconies, tall feature glazing between the homes and a garage to each.", "two-storey duplex with rounded balconies and tall feature windows"),
   ("panania-duplex", "Panania", "Duplex", "duplex", "A pair of two-storey homes with a shared driveway, glazed balconies and generous garages.", "two-storey duplex with glazed balconies and shared driveway"),
   ("padstow-duplex-pool", "Padstow", "Duplex with pool", "duplex", "A duplex with a garage to each home, a rear pool and a covered terrace.", "duplex with double garage and rear swimming pool"),
   ("miranda-corner-duplex", "Miranda", "Corner duplex", "duplex", "A corner-site duplex with a timber-battened fence, glass balconies and street frontage on two sides.", "corner duplex with glass balconies and battened fence"),
