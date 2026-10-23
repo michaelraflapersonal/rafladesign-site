@@ -377,7 +377,7 @@ PROJECTS = [
   ("padstow-duplex-pool", "Padstow", "Duplex with pool", "duplex", "A duplex with a garage to each home, a rear pool and a covered terrace.", "duplex with double garage and rear swimming pool"),
   ("miranda-corner-duplex", "Miranda", "Corner duplex", "duplex", "A corner-site duplex with a timber-battened fence, glass balconies and street frontage on two sides.", "corner duplex with glass balconies and battened fence"),
   ("sylvania-sloping-site-duplex", "Sylvania", "Duplex on a sloping site", "duplex", "A duplex stepped into a steep block, with basement garages, curved stone retaining walls and glass-balustraded entry stairs.", "duplex on a sloping site with basement garages and stone retaining walls"),
-  ("sylvania-duplex", "Sylvania", "Duplex", "duplex", "A duplex with green accents, glass balconies and a sloping driveway to each garage.", "two-storey duplex with green accents and glass balconies"),
+  ("sylvania-two-houses", "Sylvania", "Two houses", "houses double-storey", "Two neighbouring two-storey houses designed together, each with its own garage, glass balconies and brick and timber detailing.", "two neighbouring two-storey houses with glass balconies and garages"),
   ("padstow-duplex-granny-flat", "Padstow", "Duplex and granny flat", "duplex granny-flat", "A duplex with a garage to each home and a granny flat at the rear.", "duplex with garages and a rear granny flat"),
   ("padstow-duplex", "Padstow", "Duplex", "duplex", "A dark-toned duplex with large glazed openings, balconies over the entry and parking in front.", "dark-toned two-storey duplex with large windows and balconies"),
   ("austral-house", "Austral", "Two-storey house", "houses double-storey", "A narrow-lot two-storey house with a stone feature wall, timber garage door and balcony over the entry.", "two-storey house with stone feature wall and balcony"),
@@ -543,5 +543,5 @@ if __name__ == "__main__":
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/*.css\n  Cache-Control: public, max-age=3600\n\n/*.js\n  Cache-Control: public, max-age=3600\n")
     with open(os.path.join(OUT, "_redirects"), "w") as f:
-        f.write("# Old WordPress URLs -> new site\n/project /portfolio 301\n/project/* /portfolio 301\n/dt_team/* /about 301\n/blog / 301\n/portfolio/southport-three-storey-building /portfolio/southport-unit-block 301\n")
+        f.write("# Old WordPress URLs -> new site\n/project /portfolio 301\n/project/* /portfolio 301\n/dt_team/* /about 301\n/blog / 301\n/portfolio/sylvania-duplex /portfolio/sylvania-two-houses 301\n/portfolio/southport-three-storey-building /portfolio/southport-unit-block 301\n")
     print("built", ", ".join(PAGES), "+ 404, _headers; form", "posts to /api/enquiry")
