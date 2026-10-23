@@ -381,6 +381,7 @@ PROJECTS = [
   ("austral-house", "Austral", "Two-storey house", "houses double-storey", "A narrow-lot two-storey house with a stone feature wall, timber garage door and balcony over the entry.", "two-storey house with stone feature wall and balcony"),
   ("sans-souci-house", "Sans Souci", "Two-storey house", "houses double-storey", "A two-storey house with a tall framed entry, upper balcony, double garage and open-plan living.", "two-storey house with framed entry and double garage"),
   ("bradbury-house-secondary-dwelling", "Bradbury", "House and secondary dwelling", "houses granny-flat", "A two-storey house with a bright open-plan interior and a secondary dwelling with its own entry.", "two-storey house with open-plan interior and secondary dwelling"),
+  ("fairfield-heights-car-wash", "Fairfield Heights", "Commercial: hand car wash", "commercial", "A corner-site hand car wash with a curved steel canopy, landscaped planter edge and pedestrian-friendly frontage.", "corner hand car wash with curved canopy and landscaped planter"),
   ("peakhurst-house-model", "Peakhurst", "House, 3D model", "houses", "A 3D model of a brick house stepping down a sloping site, with garage below and balcony above.", "3D model of a brick house on a sloping site"),
   ("sutherland-house-model", "Sutherland", "House, 3D model", "houses double-storey", "A 3D massing model of a two-storey house with skillion roof forms and clerestory windows.", "3D model of a two-storey house with skillion roofs"),
 ]
@@ -411,6 +412,7 @@ def page_portfolio():
   <button type="button" data-filter="houses" aria-pressed="false">Houses</button>
   <button type="button" data-filter="duplex" aria-pressed="false">Duplexes</button>
   <button type="button" data-filter="granny-flat" aria-pressed="false">Granny flats</button>
+  <button type="button" data-filter="commercial" aria-pressed="false">Commercial</button>
 </div>'''
     items = ",".join(f'{{"@type":"ListItem","position":{i+1},"url":"{SITE}/portfolio/{p[0]}"}}' for i, p in enumerate(PROJECTS))
     ld = f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{items}]}}</script>'
