@@ -181,10 +181,10 @@ def enquiry_form():
 def hero_sign():
     clip = "".join(f'<path d="{d}"/>' for d in PANES)
     outline = "".join(f'<path class="outline" pathLength="100" d="{d}"/>' for d in PANES)
-    return f'''<svg class="arch-sign" viewBox="-2 -2 124 124" role="img" aria-label="The Rafla Design window mark, with a two-storey duplex designed by Rafla Design seen through its four panes">
+    return f'''<svg class="arch-sign" viewBox="-2 -2 124 124" role="img" aria-label="The Rafla Design window mark, with a two-storey home designed by Rafla Design seen through its four panes">
   <defs><clipPath id="rd-clip">{clip}</clipPath></defs>
   <g class="photo" clip-path="url(#rd-clip)">
-    <image href="images/hero.webp" x="-24" y="0" width="168" height="120" preserveAspectRatio="xMidYMid slice"/>
+    <image href="images/house-render.webp" x="-24" y="0" width="168" height="120" preserveAspectRatio="xMidYMid slice"/>
   </g>
   <path class="panel" fill-rule="evenodd" d="{FRAME} {" ".join(PANES)}"/>
   <path class="outline" pathLength="100" d="{FRAME}"/>
