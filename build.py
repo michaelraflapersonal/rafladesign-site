@@ -59,7 +59,7 @@ def head(title, desc, path):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="canonical" href="{SITE}/{'' if path == './' else path}">
+<link rel="canonical" href="{SITE}/{'' if path == './' else path.replace('.html', '')}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:image" content="{SITE}/images/og.jpg">
@@ -481,7 +481,7 @@ if __name__ == "__main__":
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n")
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
-        urls = "".join(f"<url><loc>{SITE}/{'' if n == 'index.html' else n}</loc></url>" for n in PAGES)
+        urls = "".join(f"<url><loc>{SITE}/{'' if n == 'index.html' else n.replace('.html', '')}</loc></url>" for n in PAGES)
         f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
     with open(os.path.join(OUT, "404.html"), "w") as f:
         f.write(page_404())
