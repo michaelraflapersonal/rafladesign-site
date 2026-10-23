@@ -7,6 +7,7 @@ PHONE = "0409 701 575"
 TEL = "+61409701575"
 EMAIL = "info@rafladesign.com"
 SITE = "https://rafladesign.com"
+GBP = "https://share.google/jB7pmoJVgiT2d4xwY"
 
 # Rafla Design "RD" mark, redrawn from the brand file (R bowl + leg, arched D)
 # Rafla Design window mark (concept 2b): a 10u square, 1u struts, four panes forming a mirrored R and a D
@@ -108,6 +109,7 @@ def footer():
           <li><a href="tel:{TEL}">{PHONE}</a></li>
           <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
           <li>Mortdale, NSW</li>
+          <li><a href="{GBP}" target="_blank" rel="noopener">Find us on Google</a></li>
         </ul>
       </div>
     </div>
@@ -204,7 +206,7 @@ STEPS = [
   ("Start building", "You have your approval pack and you’re ready to build. We’re happy to oversee the build against the plans and stay on hand for questions.", "Build support available"),
 ]
 
-SCHEMA = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Rafla Design","description":"Home design, detailing and drafting services","url":"https://rafladesign.com","telephone":"+61409701575","email":"info@rafladesign.com","foundingDate":"2000","image":"https://rafladesign.com/images/og.jpg","address":{"@type":"PostalAddress","addressLocality":"Mortdale","addressRegion":"NSW","addressCountry":"AU"},"areaServed":"Sydney"}</script>'
+SCHEMA = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Rafla Design","description":"Home design, detailing and drafting services","url":"https://rafladesign.com","telephone":"+61409701575","email":"info@rafladesign.com","foundingDate":"2000","image":"https://rafladesign.com/images/og.jpg","address":{"@type":"PostalAddress","addressLocality":"Mortdale","addressRegion":"NSW","addressCountry":"AU"},"areaServed":"Sydney","hasMap":"https://share.google/jB7pmoJVgiT2d4xwY","sameAs":["https://share.google/jB7pmoJVgiT2d4xwY"]}</script>'
 
 # ---------------- Pages ----------------
 
@@ -296,6 +298,7 @@ def page_home():
         <li><span class="k">Call</span><a class="v" href="tel:{TEL}">{PHONE}</a></li>
         <li><span class="k">Email</span><a class="v" href="mailto:{EMAIL}">{EMAIL}</a></li>
         <li><span class="k">Based in</span><span class="v">Mortdale, NSW</span></li>
+        <li><span class="k">Google</span><a class="v" href="{GBP}" target="_blank" rel="noopener">See us and our reviews</a></li>
       </ul>
     </div>
     {enquiry_form()}
