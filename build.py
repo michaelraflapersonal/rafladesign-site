@@ -355,7 +355,7 @@ def page_services():
     <ul class="included">
       <li>A fixed fee agreed before we start</li>
       <li>A free initial consultation</li>
-      <li>Custom designs drawn for your site</li>
+      <li>Custom designs designed for your site</li>
       <li>Council lodgement and liaison through to approval</li>
       <li>No extra charge for minor alterations</li>
       <li>The same people from start to finish</li>
@@ -454,7 +454,7 @@ def page_portfolio():
     return head("Portfolio | Rafla Design",
                 "Duplexes, houses and granny flats designed by Rafla Design across Sydney's south and south-west. See the 3D renders.", "portfolio.html").replace("</head>", ld + "\n</head>") + header("portfolio.html") + page_head(
         "Projects since 2000. Here’s a selection.",
-        "Every project is drawn for its site, its owners and its Council. Open one to see the full set of renders.", photo="images/portfolio-hero.webp") + f'''
+        "Every project is designed for its site, its owners and its Council. Open one to see the full set of renders.", photo="images/portfolio-hero.webp") + f'''
 <section class="band band-white">
   <div class="wrap">
     {filters}
