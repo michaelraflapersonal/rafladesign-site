@@ -277,7 +277,7 @@ def page_home():
 
 <section class="reel-band on-dark" aria-label="Recent projects">
   <div class="wrap reel-head">
-    <div><h2>See what we’ve drawn</h2><p>Real homes, duplexes and granny flats across Sydney, shown as 3D renders.</p></div>
+    <div><h2>See what we’ve designed</h2><p>Real homes, duplexes and granny flats across Sydney, shown as 3D renders.</p></div>
     <div class="reel-ctrl"><button type="button" data-reel="-1" aria-label="Previous projects">&#8592;</button><button type="button" data-reel="1" aria-label="Next projects">&#8594;</button></div>
   </div>
   <div class="reel" data-reel-track tabindex="0" aria-label="Scrollable list of projects">{reel}<a class="reel-card reel-all" href="portfolio"><span>See all {nproj} projects<em>&#8594;</em></span></a></div>
