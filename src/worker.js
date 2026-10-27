@@ -98,7 +98,9 @@ export default {
     const { pathname } = new URL(request.url);
     // Old WordPress site was hit by casino spam under /projects/* and /blog/page/*.
     // 410 Gone tells Google to drop them faster than a 404.
-    if (pathname.startsWith("/projects/") || pathname.startsWith("/blog/page/"))
+    // Also gone: the deleted Mortdale granny flat portfolio page (removed on purpose).
+    if (pathname.startsWith("/projects/") || pathname.startsWith("/blog/page/") ||
+        pathname === "/portfolio/mortdale-granny-flat" || pathname === "/portfolio/mortdale-granny-flat.html")
       return new Response("Gone", { status: 410, headers: { "content-type": "text/plain", "x-robots-tag": "noindex" } });
     if (pathname === "/api/enquiry") return handleEnquiry(request, env);
     if (pathname.startsWith("/api/")) return json({ ok: false }, 404);

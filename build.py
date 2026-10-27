@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Builds the Rafla Design static site from shared parts. Run: python3 build.py"""
-import os, re
+import os, re, json
 
 OUT = os.path.dirname(os.path.abspath(__file__))
 PHONE = "0409 701 575"
@@ -51,7 +51,17 @@ GA = f"""<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA_ID}');</script>"""
 
 
-def head(title, desc, path):
+def fit(text, limit=158):
+    """Trim a meta description to a length Google will show in full, at a word boundary."""
+    if len(text) <= limit:
+        return text
+    return text[:limit - 1].rsplit(" ", 1)[0].rstrip(",;:. ") + "…"
+
+
+def head(title, desc, path, image=None):
+    desc = fit(desc)
+    canon = f"{SITE}/{'' if path == './' else path.replace('.html', '')}"
+    img = image or f"{SITE}/images/og.jpg"
     return f'''<!DOCTYPE html>
 <html lang="en-AU">
 <head>
@@ -59,11 +69,18 @@ def head(title, desc, path):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="canonical" href="{SITE}/{'' if path == './' else path.replace('.html', '')}">
+<link rel="canonical" href="{canon}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:image" content="{SITE}/images/og.jpg">
+<meta property="og:image" content="{img}">
+<meta property="og:url" content="{canon}">
+<meta property="og:site_name" content="Rafla Design">
+<meta property="og:locale" content="en_AU">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{img}">
 <meta name="theme-color" content="#0f2e29">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -217,12 +234,34 @@ STEPS = [
   ("Start building", "You have your approval pack and you’re ready to build. We’re happy to oversee the build against the plans and stay on hand for questions.", "Build support available"),
 ]
 
-SCHEMA = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Rafla Design","description":"Home design, detailing and drafting services","url":"https://rafladesign.com","telephone":"+61409701575","email":"info@rafladesign.com","foundingDate":"2000","image":"https://rafladesign.com/images/og.jpg","address":{"@type":"PostalAddress","addressLocality":"Mortdale","addressRegion":"NSW","addressCountry":"AU"},"areaServed":"Sydney","hasMap":"https://maps.app.goo.gl/MREMDJzHJVCQqVCm7","sameAs":["https://maps.app.goo.gl/MREMDJzHJVCQqVCm7"]}</script>'
+def _ld(obj):
+    return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + '</script>'
+
+BUSINESS_ID = SITE + "/#business"
+SCHEMA = _ld({"@context": "https://schema.org", "@graph": [
+    {"@type": "ProfessionalService", "@id": BUSINESS_ID, "name": "Rafla Design",
+     "description": "Family-run home design and drafting practice since 2000: houses, duplexes, granny flats, renovations and extensions, with Council approvals handled.",
+     "url": SITE + "/", "telephone": "+61409701575", "email": "info@rafladesign.com",
+     "foundingDate": "2000", "logo": SITE + "/favicon-192.png", "image": SITE + "/images/og.jpg",
+     "founder": {"@type": "Person", "name": "Joseph Rafla"},
+     "address": {"@type": "PostalAddress", "addressLocality": "Mortdale", "addressRegion": "NSW", "addressCountry": "AU"},
+     "areaServed": [{"@type": "AdministrativeArea", "name": n} for n in ("Sydney", "New South Wales", "Victoria", "Queensland", "Western Australia")],
+     "knowsAbout": ["Home design", "Building drafting", "Granny flats", "Duplex design", "Council approvals"],
+     "hasMap": "https://maps.app.goo.gl/MREMDJzHJVCQqVCm7", "sameAs": ["https://maps.app.goo.gl/MREMDJzHJVCQqVCm7"]},
+    {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/", "name": "Rafla Design", "publisher": {"@id": BUSINESS_ID}},
+]})
+
+
+def crumbs_ld(*trail):
+    """BreadcrumbList for a core page. trail = (name, path) pairs after Home."""
+    items = [("Home", "")] + list(trail)
+    return _ld({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": n, "item": f"{SITE}/{p}"} for i, (n, p) in enumerate(items)]})
 
 # ---------------- Pages ----------------
 
 def page_home():
-    dims = [("Family", "", "father-and-son practice, dealing with you directly"), ("2000", "", "year Joseph Rafla started the practice"),
+    dims = [("Family", "", "father-and-son practice, dealing with you directly"), ("25+", "", "years designing homes, since 2000"),
             ("Fixed", None, "fee agreed up front"), ("Council", None, "lodgement handled for you")]
     dim_html = ""
     for v, suf, lab in dims:
@@ -248,8 +287,8 @@ def page_home():
 
     steps = "".join(f'<li><h3>{t}</h3><p>{d.split(". ")[0]}.</p></li>' for t, d, _ in STEPS)
 
-    return head("Rafla Design | Home design and drafting in Sydney",
-                "Family-run home design and drafting since 2000. Houses, duplexes, granny flats and renovations designed, with fixed fees and Council handled for you. Book a free consultation.", "./").replace("</head>", SCHEMA + "</head>") + header("./") + f'''
+    return head("Home Design & Drafting in Sydney Since 2000 | Rafla Design",
+                "Family-run home design and drafting in Sydney for over 25 years. Houses, duplexes, granny flats and renovations, fixed fees, Council handled. Free consultation.", "./").replace("</head>", SCHEMA + "</head>") + header("./") + f'''
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
@@ -340,8 +379,8 @@ def page_services():
     arts = "".join(
         f'<article>{icon(k)}<div><h3>{t}</h3><p>{d}</p><a href="contact.html#{k}">Enquire about {t.lower()}</a></div></article>'
         for k, t, d in TYPES)
-    return head("Services | Rafla Design",
-                "Design and drafting for single and double storey homes, granny flats, duplexes, townhouses, multi-dwelling projects, renovations and extensions. Fixed fees, Council handled.", "services.html") + header("services.html") + page_head(
+    return head("Home Design & Drafting Services in Sydney | Rafla Design",
+                "Design and drafting for single and double storey homes, granny flats, duplexes, townhouses, multi-dwelling projects, renovations and extensions. Fixed fees, Council handled.", "services.html").replace("</head>", crumbs_ld(("Services", "services")) + "</head>") + header("services.html") + page_head(
         "Design and drafting for every kind of home project",
         "New builds and renovations, with budget and buildable design kept at the front. No job is too small.") + f'''
 <section class="band band-white">
@@ -369,8 +408,8 @@ def page_services():
 
 def page_process():
     items = "".join(f'<li><div><h3>{t}</h3><p>{d}</p><span class="note">{n}</span></div></li>' for t, d, n in STEPS)
-    return head("Our Process | Rafla Design",
-                "How Rafla Design works: free consultation, survey, design, Council submission and approval, then build. Payments split 50/50 with no surprise costs.", "process.html") + header("process.html") + page_head(
+    return head("Our Design & Council Approval Process | Rafla Design",
+                "How Rafla Design works: free consultation, survey, design, Council submission and approval, then build. Payments split 50/50 with no surprise costs.", "process.html").replace("</head>", crumbs_ld(("Process", "process")) + "</head>") + header("process.html") + page_head(
         "Five clear steps from first conversation to ready to build",
         "You always know what happens next and what it costs. Payment is split in two: 50% to start, 50% when you approve the final plan.") + f'''
 <section class="band band-white">
@@ -393,7 +432,7 @@ PROJECTS = [
   ("miranda-duplex", "Miranda", "Duplex", "duplex", "A two-storey duplex with glazed balconies, timber-clad feature walls and a single garage to each home.", "two-storey duplex with glass balconies and garages"),
   ("greystanes-duplex", "Greystanes", "Duplex", "duplex", "A contemporary duplex in dark and pale render, with upper-level balconies and a garage to each dwelling.", "contemporary two-storey duplex in dark and pale render"),
   ("peakhurst-two-storey-home", "Peakhurst", "Two-storey home", "houses double-storey", "A two-storey home with glass balustrades, a double garage and a landscaped front garden.", "two-storey home with glass balconies and double garage"),
-  ("padstow-duplex-balconies", "Padstow", "Duplex", "duplex", "A two-storey duplex with deep, rounded balconies, tall feature glazing between the homes and a garage to each.", "two-storey duplex with rounded balconies and tall feature windows"),
+  ("padstow-duplex-balconies", "Padstow", "Duplex with balconies", "duplex", "A two-storey duplex with deep, rounded balconies, tall feature glazing between the homes and a garage to each.", "two-storey duplex with rounded balconies and tall feature windows"),
   ("panania-duplex", "Panania", "Duplex", "duplex", "A pair of two-storey homes with a shared driveway, glazed balconies and generous garages.", "two-storey duplex with glazed balconies and shared driveway"),
   ("padstow-duplex-pool", "Padstow", "Duplex with pool", "duplex", "A duplex with a garage to each home, a rear pool and a covered terrace.", "duplex with double garage and rear swimming pool"),
   ("casula-steep-site-house", "Casula", "Three-storey house on a steep site", "houses", "A three-storey home built up from a double garage on a steeply sloping block, with glass balconies, terraces, a rear pool and open-plan living.", "three-storey house on a steep site over a double garage with pool"),
@@ -451,8 +490,8 @@ def page_portfolio():
 </div>'''
     items = ",".join(f'{{"@type":"ListItem","position":{i+1},"url":"{SITE}/portfolio/{p[0]}"}}' for i, p in enumerate(PROJECTS))
     ld = f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{items}]}}</script>'
-    return head("Portfolio | Rafla Design",
-                "Duplexes, houses and granny flats designed by Rafla Design across Sydney's south and south-west. See the 3D renders.", "portfolio.html").replace("</head>", ld + "\n</head>") + header("portfolio.html") + page_head(
+    return head("Portfolio of Duplexes, Houses & Granny Flats | Rafla Design",
+                f"{len(PROJECTS)} projects designed by Rafla Design since 2000: duplexes, houses, granny flats and units across Sydney and beyond. See the 3D renders.", "portfolio.html").replace("</head>", ld + crumbs_ld(("Portfolio", "portfolio")) + "\n</head>") + header("portfolio.html") + page_head(
         "Projects since 2000. Here’s a selection.",
         "Every project is designed for its site, its owners and its Council. Open one to see the full set of renders.", photo="images/portfolio-hero.webp") + f'''
 <section class="band band-white">
@@ -487,7 +526,8 @@ def page_project(slug):
     ld = ('<script type="application/ld+json">{"@context":"https://schema.org","@graph":['
           f'{{"@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{SITE}/"}},{{"@type":"ListItem","position":2,"name":"Portfolio","item":"{SITE}/portfolio"}},{{"@type":"ListItem","position":3,"name":"{title} in {suburb}","item":"{url}"}}]}},'
           f'{{"@type":"ImageGallery","name":"{title} in {suburb}","url":"{url}","image":[' + ",".join(f'{{"@type":"ImageObject","contentUrl":"{SITE}/images/{f}","description":"{alt}, {suburb}"}}' for f in files) + ']}]}</script>')
-    h = head(f"{title} in {suburb} | Rafla Design", f"{blurb} Designed by Rafla Design. {len(files)} {_kind(slug)}.", f"portfolio/{slug}").replace("</head>", ld + "\n</head>")
+    h = head(f"{title} in {suburb} | Rafla Design", f"{blurb} Designed by Rafla Design. View the {_kind(slug)}.", f"portfolio/{slug}",
+             image=f"{SITE}/images/og/{slug}.jpg").replace("</head>", ld + "\n</head>")
     body = header("portfolio.html") + page_head(f"{title}, {suburb}", blurb) + f'''
 <section class="band band-white">
   <div class="wrap">
@@ -505,8 +545,8 @@ def page_project(slug):
 
 
 def page_about():
-    return head("About | Rafla Design",
-                "Rafla Design is a father-and-son design and drafting practice started by civil engineer Joseph Rafla in 2000.", "about.html") + header("about.html") + page_head(
+    return head("About Rafla Design: A Father-and-Son Practice Since 2000",
+                "Rafla Design is a father-and-son home design and drafting practice, started in 2000 by civil engineer Joseph Rafla. Over 25 years of Sydney homes.", "about.html").replace("</head>", crumbs_ld(("About", "about")) + "</head>") + header("about.html") + page_head(
         "A father and son with a love for design",
         "Family owned since 2000, and still small enough that you deal with us directly.") + f'''
 <section class="band band-white">
@@ -514,7 +554,7 @@ def page_about():
     <div class="measure">
       <p>Thank you for visiting Rafla Design. We’d love to get to know you, and we know you’ll decide based on what you know about us. So here it is.</p>
       <p>Rafla Design began in 2000 when Joseph Rafla, a civil engineer, designed the homes of his three brothers. His son, Michael, joined what became a successful family practice.</p>
-      <p>Since then we’ve taken on single and double storey houses, duplexes, townhouses, granny flats and more. No job is too small. Whether it’s a new build or a renovation, we keep budget and realistic, buildable design at the front.</p>
+      <p>In the 25 years since, we’ve taken on single and double storey houses, duplexes, townhouses, granny flats and more. Most of our work is in Sydney and across New South Wales, and we’ve also designed projects for clients in Melbourne, Brisbane and Perth. No job is too small. Whether it’s a new build or a renovation, we keep budget and realistic, buildable design at the front.</p>
       <p>Our tight-knit team means you get our undivided attention and personal service, for a journey that’s as smooth as possible.</p>
       <p style="margin-top:2rem"><a class="btn btn-mint" href="contact.html#enquire">Book a free consultation</a></p>
     </div>
@@ -528,8 +568,8 @@ def page_about():
 
 
 def page_contact():
-    return head("Contact | Rafla Design",
-                "Book a free, no-obligation consultation with Rafla Design for your new home, duplex, granny flat, renovation or extension. Call 0409 701 575.", "contact.html") + header("contact.html") + page_head(
+    return head("Contact Rafla Design | Free Consultation, Sydney",
+                "Book a free, no-obligation consultation for your new home, duplex, granny flat, renovation or extension. Call Rafla Design on 0409 701 575.", "contact.html").replace("</head>", crumbs_ld(("Contact", "contact")) + "</head>") + header("contact.html") + page_head(
         "Book your free consultation",
         "Tell us about your project and we’ll call to arrange a time. Prefer to talk now? Call us.") + f'''
 <section class="band on-dark arch-pattern" aria-labelledby="enq-h">
@@ -555,15 +595,42 @@ def page_404():
 ''' + footer()
 
 
+CLEAN = re.compile(r'href="(/?)(services|process|portfolio|about|contact)\.html(#[^"]*)?"')
+
+def finish(html):
+    """Point internal links at the clean URLs Cloudflare serves, avoiding a redirect hop."""
+    return CLEAN.sub(lambda m: f'href="{m.group(1) or ""}{m.group(2)}{m.group(3) or ""}"', html)
+
+
+def make_og_images():
+    """1200x630 social share image per project, cropped from its first image."""
+    from PIL import Image
+    os.makedirs(os.path.join(IMGDIR, "og"), exist_ok=True)
+    for p in PROJECTS:
+        files = _imgs(p[0])
+        if not files:
+            continue
+        with Image.open(os.path.join(IMGDIR, files[0])) as im:
+            im = im.convert("RGB")
+            w, h = im.size
+            target = 1200 / 630
+            if w / h > target:
+                nw = int(h * target); im = im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
+            else:
+                nh = int(w / target); im = im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+            im.resize((1200, 630), Image.LANCZOS).save(os.path.join(IMGDIR, "og", p[0] + ".jpg"), "JPEG", quality=82, optimize=True)
+
+
 PAGES = {
   "index.html": page_home, "services.html": page_services, "process.html": page_process,
   "portfolio.html": page_portfolio, "about.html": page_about, "contact.html": page_contact,
 }
 
 if __name__ == "__main__":
+    make_og_images()
     for name, fn in PAGES.items():
         with open(os.path.join(OUT, name), "w") as f:
-            f.write(fn())
+            f.write(finish(fn()))
     with open(os.path.join(OUT, "favicon.svg"), "w") as f:
         f.write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><path fill="#3abca3" d="{FRAME}"/><path fill="#0f2e29" d="{" ".join(PANES)}"/></svg>')
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
@@ -574,9 +641,9 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(OUT, "portfolio"), exist_ok=True)
     for p in PROJECTS:
         with open(os.path.join(OUT, "portfolio", p[0] + ".html"), "w") as f:
-            f.write(page_project(p[0]))
+            f.write(finish(page_project(p[0])))
     with open(os.path.join(OUT, "404.html"), "w") as f:
-        f.write(page_404())
+        f.write(finish(page_404()))
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/*.css\n  Cache-Control: public, max-age=3600\n\n/*.js\n  Cache-Control: public, max-age=3600\n")
     with open(os.path.join(OUT, "_redirects"), "w") as f:

@@ -6,7 +6,7 @@
     "directory": "./",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*", "/projects/*", "/blog/page/*"]
+    "run_worker_first": ["/api/*", "/projects/*", "/blog/page/*", "/portfolio/mortdale-granny-flat", "/portfolio/mortdale-granny-flat.html"]
   },
   "send_email": [{ "name": "EMAIL" }]
 }
